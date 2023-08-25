@@ -2,8 +2,8 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import type {RootState} from '../store';
 // import { ReqResult } from '../../../interfaces/user.interface';
 
-// const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_API_URL;
-const BASE_URL = 'http://localhost:8080/';
+const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_API_URL;
+// const BASE_URL = 'http://localhost:8080/';
 console.log(BASE_URL);
 // Define a service using a base URL and expected endpoints
 export const UserAuthApi = createApi({
