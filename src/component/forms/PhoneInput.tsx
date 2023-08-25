@@ -13,6 +13,8 @@ import Countries from "../../utils/countries2.json";
 import { AsYouType } from "libphonenumber-js";
 // import { PhoneNumberInputProps } from "./types";
 import { useState, useEffect, useRef } from "react";
+
+import { useUpdateEffect } from "usehooks-ts";
 import { Country, SearchOnList } from "./SearchList";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import CustomInput from "./Input";
@@ -45,15 +47,16 @@ export const PhoneNumberInput = ({
     handler: () => onClose(),
   });
 
-  useEffect(() => {
-    if (country !== "" || number !== "") {
-      onChange({
-        code: country,
-        phone: number,
-        countryName: countryName,
-      });
-    }
-  }, [country, number, onChange, countryName]);
+  // useUpdateEffect(() => {
+  //   console.log('here')
+  //   if (country !== "" || number !== "") {
+  //     onChange({
+  //       code: country,
+  //       phone: number,
+  //       countryName: countryName,
+  //     });
+  //   }
+  // }, [onChange]);
 
   const onCountryChange = (item: Country) => {
     const parsedNumber = new AsYouType().input(`${country}${number}`);
@@ -61,7 +64,11 @@ export const PhoneNumberInput = ({
     setCountry(item?.phone);
     setCountryFlag(item?.flag);
     setCountryName(item?.name);
-    onChange(parsedNumber);
+    onChange({
+      code: item?.phone,
+      phone: "",
+      countryName: item?.name,
+    });
     onClose();
   };
 
@@ -70,9 +77,13 @@ export const PhoneNumberInput = ({
     const parsedNumber = new AsYouType().input(`${country}${number}`);
 
     setNumber(value);
+    onChange({
+      code: country,
+      phone: value,
+      countryName: countryName,
+    });
     onChange(parsedNumber);
   };
-
 
   return (
     <>
@@ -85,6 +96,13 @@ export const PhoneNumberInput = ({
             errors={errors}
             onChange={onCountryChange}
             onFocus={() => onToggle()}
+            onBlur={() => {
+              onChange({
+                code: country,
+                phone: "",
+                countryName: countryName,
+              });
+            }}
             value={countryName}
             type={"text"}
           />
@@ -100,9 +118,9 @@ export const PhoneNumberInput = ({
           >
             <InputLeftElement
               width="5em"
-              h={'full'}
+              h={"full"}
               mr={6}
-              alignSelf={'center'}
+              alignSelf={"center"}
               cursor="pointer"
             >
               <Text as="span" mr={3}>
@@ -123,6 +141,13 @@ export const PhoneNumberInput = ({
                 errors["phone"] || errors["phoneCode"] ? "" : "Enter Phone"
               }
               onChange={onPhoneNumberChange}
+              onBlur={() => {
+                onChange({
+                  code: country,
+                  phone: number,
+                  countryName: countryName,
+                });
+              }}
             />
             {errors["phone"] || errors["phoneCode"] ? (
               <Box top={-3} left={3} zIndex={10} pos={"absolute"} bg={"white"}>

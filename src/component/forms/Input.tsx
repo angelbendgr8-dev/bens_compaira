@@ -13,19 +13,21 @@ type Props = {
   min?: number;
   max?: number;
   labelStyle?: any;
+  onBlur?: any;
 };
 const CustomInput = ({
   label,
   id,
   onChange,
   onFocus = () => {},
+  onBlur = () => {},
   type,
-  errors={},
+  errors = {},
   value,
-  name ='',
+  name = "",
   min,
   max,
-  labelStyle= {}
+  labelStyle = {},
 }: Props) => {
   return (
     <FormControl
@@ -45,6 +47,7 @@ const CustomInput = ({
         max={max}
         onFocus={onFocus}
         autoFocus={errors[name] ? true : false}
+        onBlur={onBlur}
         borderColor={errors[name] ? "red.600" : "muted.100"}
         onChange={(input) => onChange(input)}
         borderWidth={errors[name] ? 2 : 1}
