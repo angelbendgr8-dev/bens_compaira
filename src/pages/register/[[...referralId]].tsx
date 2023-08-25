@@ -384,7 +384,7 @@ const Register = () => {
       register(rest.username, rest.email, password).then((res) => {});
       await createCandidate(rest);
       await uploadCandidate({ username: rest.username, formData }).unwrap();
-      if (!isEmpty(referralId![0]) && !isEmpty(referralId![1])) {
+      if (!isEmpty(referralId) && !isEmpty(referralId![0]) && !isEmpty(referralId![1])) {
         await setCandidateJobSector({
           username: rest.username,
           credentials: [refSector.id],
@@ -394,7 +394,7 @@ const Register = () => {
           source: referralId![1],
           credentials: { candidate: rest.username },
         }).unwrap();
-      } else if (referralId) {
+      } else if (!isEmpty(referralId)) {
         await setCandidateJobSector({
           username: rest.username,
           credentials: [refSector.id],
