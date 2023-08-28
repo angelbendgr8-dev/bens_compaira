@@ -453,8 +453,8 @@ const Register = () => {
             <Stack alignItems={"center"} mb={4}>
               <Image
                 alt="logo"
-                boxSize={"100px"}
-                src={"/assets/images/Marquee.png"}
+                // boxSize={"200px"}
+                src={"/assets/images/app_logo.png"}
               />
               <Heading
                 color={"gray.800"}
@@ -828,7 +828,7 @@ const Register = () => {
           </Stack>
           <Flex
             display={{ base: "none", md: "block" }}
-            bg="white"
+            // bg="white"
             flex={1}
             alignItems={"center"}
           >

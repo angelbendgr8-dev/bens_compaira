@@ -87,18 +87,18 @@ const ValuesTab = ({ changeTabs }: { changeTabs: any }) => {
     }
   }, [valuesData,defaultValues]);
 
-  useEffect(() => {
-    const a = moment(valuesData.updatedOn);
+  // useEffect(() => {
+  //   const a = moment(valuesData.updatedOn);
 
-    const b = moment();
+  //   const b = moment();
 
-    const diff = b.diff(a, "days");
-    if (valuesData && diff > 365) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [valuesData]);
+  //   const diff = b.diff(a, "days");
+  //   if (valuesData && diff > 365) {
+  //     setDisabled(false);
+  //   } else {
+  //     setDisabled(true);
+  //   }
+  // }, [valuesData]);
 
   const getResults = () => {
     let result: any = {};
@@ -116,7 +116,7 @@ const ValuesTab = ({ changeTabs }: { changeTabs: any }) => {
       });
   };
   useEffect(() => {
-    // console.log(labels);
+    console.log(disabled);
   }, [behaviors]);
 
   const handleChange = (value: any, param: any) => {

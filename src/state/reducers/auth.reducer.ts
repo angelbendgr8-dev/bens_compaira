@@ -12,6 +12,7 @@ type AuthState = {
   data: any;
   resetEmail: string;
   prevRoute: string;
+  logout: boolean;
 };
 
 const slice = createSlice({
@@ -25,6 +26,7 @@ const slice = createSlice({
       message: "",
     },
     data: {},
+    logout: false,
     resetEmail: "",
     prevRoute: '',
   } as unknown as AuthState,
@@ -37,6 +39,7 @@ const slice = createSlice({
     ) => {
       state.user = user;
       state.token = token;
+      state.logout = false;
     },
     updateCredentials: (
       state,
@@ -73,8 +76,9 @@ const slice = createSlice({
     ) => {
       state.resetEmail = email;
     },
-
-    signOut: () => {},
+    signOut: (state) => {
+      state.logout = true;
+    },
   },
 });
 
@@ -92,6 +96,7 @@ export const {
 export default slice.reducer;
 
 export const selectUser = (state: RootState) => state.userAuth.user;
+export const selectLogout = (state: RootState) => state.userAuth.logout;
 export const selectRoute = (state: RootState) => state.userAuth.prevRoute;
 export const selectToken = (state: RootState) => state.userAuth.token;
 export const selectIsLoading = (state: RootState) => state.userAuth.isLoading;

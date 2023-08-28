@@ -546,7 +546,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
     if (!isEmpty(others)) {
       saveProfileData({ username: user?.name, credentials: rest })
         .unwrap()
-        .then((payload: any) => dispatch(setProfileData({data: payload})))
+        .then((payload: any) => dispatch(setProfileData({ data: payload })))
         .catch((err) => {});
     }
 
@@ -559,6 +559,8 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
     //  });
     changeTabs(1);
   };
+  
+
   return (
     <VStack>
       <Flex
@@ -641,28 +643,29 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 name="lastName"
               />
 
-              <Controller
-                control={control}
-                rules={{
-                  maxLength: 100,
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <PhoneNumberInput
-                    name="phone"
-                    errors={errors}
-                    value={value}
-                    code={getValues("phoneCode")}
-                    couName={getValues("country")}
-                    onChange={(number) => {
-                      const { code, phone, countryName } = number;
-                      setValue("country", countryName);
-                      setValue("phoneCode", code);
-                      setValue("phone", phone);
-                    }}
-                  />
-                )}
-                name="phone"
-              />
+                <Controller
+                  control={control}
+                  rules={{
+                    maxLength: 100,
+                  }}
+                  render={({ field: { onChange, value } }) => (
+                    <PhoneNumberInput
+                      name="phone"
+                      errors={errors}
+                      value={value}
+                      code={profile.phoneCode}
+                      couName={getValues("country")}
+                      onChange={(number) => {
+                        const { code, phone, countryName } = number;
+                        setValue("country", countryName);
+                        setValue("phoneCode", code);
+                        setValue("phone", phone);
+                      }}
+                    />
+                  )}
+                  name="phone"
+                />
+
               <Controller
                 control={control}
                 rules={{
@@ -760,7 +763,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 }}
                 render={({ field: { onChange, onBlur, ref, value } }) => (
                   <StatefulMultiSelect
-                    options={technicalSkills?? []}
+                    options={technicalSkills ?? []}
                     errors={errors}
                     name={"technicalSkills"}
                     onBlur={onBlur}

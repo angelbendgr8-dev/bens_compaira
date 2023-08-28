@@ -82,6 +82,9 @@ export default function Login() {
       });
     }
   }, [error, toast]);
+  useEffect(() => {
+    dispatch(setLoading({ isLoading: false }));
+  }, []);
 
   const handleLogin = async (data: any) => {
     const { username, password } = data;
@@ -99,7 +102,10 @@ export default function Login() {
         userType: 1,
         activity: "login",
       };
-      loginActivity({ name: user?.name, credentials: formData });
+      loginActivity({ name: user?.name, credentials: formData })
+        .unwrap()
+        .then(() => {})
+        .catch(() => {});
       if (!isEmpty(prevRoute)) {
         router.push(prevRoute);
       } else {
@@ -139,8 +145,7 @@ export default function Login() {
             <Stack alignItems={"center"} mb={4}>
               <Image
                 alt="logo"
-                boxSize={"100px"}
-                src={"assets/images/Marquee.png"}
+                src={"assets/images/app_logo.png"}
               />
               <Heading
                 color={"gray.800"}

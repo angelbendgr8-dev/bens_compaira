@@ -18,12 +18,16 @@ import { IconType } from "react-icons";
 import { SidebarContent } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
 import { useAuth } from "@/state/hooks/user.hook";
-import { setPrevRoute, signOut } from "@/state/reducers/auth.reducer";
+import {
+  setLoading,
+  setPrevRoute,
+  signOut,
+} from "@/state/reducers/auth.reducer";
 import { useDispatch } from "react-redux";
 import jwtDecode from "jwt-decode";
 import { logout } from "@/state/services/awscognito.service";
 import { useRouter } from "next/router";
-import {isEmpty} from 'lodash';
+import { isEmpty } from "lodash";
 
 interface LinkItemProps {
   name: string;
@@ -40,7 +44,7 @@ const LinkItems: Array<LinkItemProps> = [
 const AppLayouts = ({ children }: { children: ReactNode }) => {
   const theme = useTheme();
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, logout: isLogout } = useAuth();
   const elementRef = useRef();
   //@ts-ignore
   const dimensions = useDimensions(elementRef);
@@ -48,36 +52,33 @@ const AppLayouts = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
   const btnRef = useRef();
   const { breakpoints } = theme;
-  useEffect(() => {
-    if (dimensions) {
-      console.log(dimensions.borderBox.width);
-    }
-  }, [dimensions]);
+  useEffect(() => {}, [dimensions]);
   // const verifyToken = () => {
   //     const decoded: any = jwtDecode(token);
   //     return decoded.exp > Date.now() / 1000;
   // };
   useEffect(() => {
-   const verifyToken = () => {
-     const decoded: any = jwtDecode(token);
-     return decoded.exp > Date.now() / 1000;
-   };
+    const verifyToken = () => {
+      const decoded: any = jwtDecode(token);
+      return decoded.exp > Date.now() / 1000;
+    };
     if (!token || !verifyToken()) {
-      console.log('unverified');
       dispatch(signOut());
       logout();
     }
-  }, [dispatch,token]);
+  }, [dispatch, token]);
 
   useEffect(() => {
-    if(isEmpty(token)){
-      dispatch(setPrevRoute({route: router.pathname}))
-       router.push("/login");
+    if (isEmpty(token)) {
+      if (isLogout) {
+        dispatch(setPrevRoute({ route: "" }));
+      } else {
+        dispatch(setPrevRoute({ route: router.pathname }));
+      }
+      router.push("/login");
     }
-  }, [token,router, dispatch])
+  }, [token, router, dispatch]);
 
-
-  console.log(breakpoints["md"]);
   const { isOpen, onOpen, onClose } = useDisclosure({
     defaultIsOpen:
       dimensions && dimensions.borderBox.width < 768 ? false : true,

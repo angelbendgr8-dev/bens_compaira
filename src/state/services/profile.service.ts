@@ -18,7 +18,7 @@ export const ProfileApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['percentage'],
+  tagTypes: ['percentage','profile'],
   endpoints: builder => ({
     saveProfileData: builder.mutation({
       query: ({username,credentials}) => ({
@@ -26,6 +26,8 @@ export const ProfileApi = createApi({
         method: 'PUT',
         body: credentials
       }),
+       invalidatesTags: ['profile']
+
     }),
     saveProfilePics: builder.mutation({
       query: ({username,credentials}) => ({
@@ -33,6 +35,7 @@ export const ProfileApi = createApi({
         method: 'POST',
         body: credentials
       }),
+      invalidatesTags: ['profile']
     }),
     uploadCV: builder.mutation({
       query: ({username,credentials}) => ({
@@ -107,6 +110,7 @@ export const ProfileApi = createApi({
       query: (username) => ({
         url: `/candidate/profile/${username}`,
       }),
+      providesTags: ['profile']
     }),
     getBehaviourData: builder.query({
       query: (username) => ({

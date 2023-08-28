@@ -13,11 +13,13 @@ import Countries from "../../utils/countries2.json";
 import { AsYouType } from "libphonenumber-js";
 // import { PhoneNumberInputProps } from "./types";
 import { useState, useEffect, useRef } from "react";
+import { isEmpty } from "lodash";
 
 import { useUpdateEffect } from "usehooks-ts";
 import { Country, SearchOnList } from "./SearchList";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import CustomInput from "./Input";
+import { useProfile } from "@/state/hooks/profile.hook";
 export type PhoneNumberInputProps = {
   value?: string;
   code?: string;
@@ -36,9 +38,10 @@ export const PhoneNumberInput = ({
   name,
 }: PhoneNumberInputProps) => {
   const ref = useRef(null);
+  const { profileData: profile } = useProfile();
   const [number, setNumber] = useState(value);
-  const [country, setCountry] = useState(code);
-  const [countryName, setCountryName] = useState(couName);
+  const [country, setCountry] = useState(profile?.phoneCode);
+  const [countryName, setCountryName] = useState(profile?.country);
   const [countryFlag, setCountryFlag] = useState(`🇨🇲`);
   const { isOpen, onToggle, onClose } = useDisclosure();
 
@@ -47,16 +50,16 @@ export const PhoneNumberInput = ({
     handler: () => onClose(),
   });
 
-  // useUpdateEffect(() => {
-  //   console.log('here')
-  //   if (country !== "" || number !== "") {
-  //     onChange({
-  //       code: country,
-  //       phone: number,
-  //       countryName: countryName,
-  //     });
-  //   }
-  // }, [onChange]);
+  useUpdateEffect(() => {
+    if (!isEmpty(profile)) {
+      setCountry(profile?.phoneCode);
+      setCountryName(profile?.country);
+      setNumber(profile?.phone);
+    }
+  }, [profile]);
+  useUpdateEffect(() => {
+    console.log(countryName);
+  }, [country, countryName, number,profile]);
 
   const onCountryChange = (item: Country) => {
     const parsedNumber = new AsYouType().input(`${country}${number}`);

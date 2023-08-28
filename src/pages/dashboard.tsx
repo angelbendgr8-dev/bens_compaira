@@ -41,8 +41,8 @@ export default function Dashboard() {
   const { token, user } = useAuth();
   const [getDashbardData] = useGetDashboardMutation();
   const { data, isLoading } = useGetProfileDataQuery(user?.name);
-  const { data: behaviour } = useGetBehaviourDataQuery(user?.name);
-  const { data: competency } = useGetCompetencyDataQuery(user?.name);
+  const { data: behaviour, error} = useGetBehaviourDataQuery(user?.name);
+  const { data: competency, error: compentencyError } = useGetCompetencyDataQuery(user?.name);
   const { data: valuesBenchmarks } = useGetValuesBenchmarkDataQuery(user?.name);
   const { data: jobSector } = useGetCandidateJobSectorsQuery(user?.name);
   const { data: functionalAreas } = useGetFunctionAreasQuery(user?.user);
@@ -78,7 +78,10 @@ export default function Dashboard() {
     if (behaviour) {
       dispatch(setBehaviourData({ data: behaviour }));
     }
-  }, [behaviour,dispatch]);
+    if(error){
+      console.log(error)
+    }
+  }, [behaviour,error,dispatch]);
   useEffect(() => {
     if (competency) {
       dispatch(setCompetencyData({ data: competency }));

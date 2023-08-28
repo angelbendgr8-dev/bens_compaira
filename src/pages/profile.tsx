@@ -36,7 +36,7 @@ export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { tab } = router.query;
-  console.log(tab);
+
 
   const { data: jobSector } = useGetCandidateJobSectorsQuery(user?.name);
   const { data, isLoading } = useGetProfileDataQuery(user?.name);
@@ -63,6 +63,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (data) {
+      console.log(data,'profile')
       dispatch(setProfileData({ data: data }));
     }
   }, [data, dispatch]);
@@ -70,7 +71,7 @@ export default function Profile() {
     if (candidatePercentage) {
       dispatch(setCandidateProgress({ data: candidatePercentage }));
     }
-  }, [data, dispatch, candidatePercentage]);
+  }, [dispatch, candidatePercentage]);
 
   useEffect(() => {
     if (jobSector) {
@@ -91,19 +92,21 @@ export default function Profile() {
           dispatch(setCandidateTechnicalSkills({ data: payload }));
         });
     }
+  }, [
+    dispatch,
+    functionAreas,
+    getCandidateFunctionalSkills,
+    getCandidateTechnicalSkills,
+    user,
+  ]);
+
+  useEffect(() => {
     getCandidateFunctionalArea(user?.name)
       .unwrap()
       .then((payload: any) =>
         dispatch(setCandidateFunctionAreas({ data: payload }))
       );
-  }, [
-    dispatch,
-    functionAreas,
-    getCandidateFunctionalArea,
-    getCandidateFunctionalSkills,
-    getCandidateTechnicalSkills,
-    user,
-  ]);
+  }, [dispatch, getCandidateFunctionalArea]);
 
   useEffect(() => {
     if (behaviour) {
