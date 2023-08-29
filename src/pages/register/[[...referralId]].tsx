@@ -48,6 +48,7 @@ import { setLoading } from "@/state/reducers/auth.reducer";
 import { useDispatch } from "react-redux";
 import { register } from "@/state/services/awscognito.service";
 import { isEmpty } from "lodash";
+import ConfirmModal from "@/component/ConfirmModal";
 
 const schema = yup
   .object({
@@ -133,6 +134,7 @@ const Register = () => {
   const [checkEmail, { isLoading }] = useCheckEmailMutation();
   const [checkUsername, { isLoading: userLoading }] =
     useCheckUsernameMutation();
+  const [complete, setComplete] = useState(false)
 
   // States
   const [sectors, setSectors] = useState<any>([]);
@@ -417,7 +419,7 @@ const Register = () => {
         position: "top-left",
       });
       dispatch(setLoading({ isLoading: false }));
-      router.push("/login");
+      setComplete(true);
     } catch (error: any) {
       dispatch(setLoading({ isLoading: false }));
       toast({
@@ -429,10 +431,16 @@ const Register = () => {
       });
     }
   };
+  const gotoLogin = () => {
+    setComplete(false);
+    router.push('/login');
+  }
 
   return (
     <Box>
       <Container maxW={"inherit"} minH={"100vh"} px={0} mx={0}>
+
+        <ConfirmModal isOpen={complete} close={gotoLogin} />
         <Stack
           flex={1}
           minH={"100vh"}
