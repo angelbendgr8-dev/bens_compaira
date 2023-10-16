@@ -127,7 +127,7 @@ export const ProfilePicture = ({}) => {
         const updatedData = { ...profileData, photo };
         dispatch(setProfileData({ data: updatedData }));
         toast({
-          title: "Profile Updated Successfully",
+          title: "‘Profile picture is loaded successfully",
           variant: "left-accent",
           status: "success",
           isClosable: true,

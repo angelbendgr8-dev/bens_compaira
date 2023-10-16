@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import Slider from "./Slider";
+import Slider from "./slider";
 import { useProfile } from "@/state/hooks/profile.hook";
 import { size } from "lodash";
 import { processBehaviour } from "@/utils/helpers";
@@ -9,11 +9,13 @@ import { useAuth } from "@/state/hooks/user.hook";
 import moment from "moment";
 import { setBehaviourData } from "@/state/reducers/profile.reducer";
 import { useDispatch } from "react-redux";
+import { useIsMounted } from "usehooks-ts";
 
 const BehaviorTab = ({ changeTabs }: { changeTabs: any }) => {
   const { behaviourData } = useProfile();
   const { user } = useAuth();
   const dispatch = useDispatch();
+  const isMounted = useIsMounted();
   // const [labels, setLabels] = useState<any>([]);
   const [saveBehaviorData] = useSaveBehaviourDataMutation();
   const dataLabels = [
@@ -52,6 +54,7 @@ const BehaviorTab = ({ changeTabs }: { changeTabs: any }) => {
   const [behaviors, setBehaviors] = useState<any>([]);
   useEffect(() => {
     if (size(behaviourData) > 0) {
+      console.log(behaviourData,'behaviour');
 
       const keys = Object.keys(behaviourData);
       const values = Object.values(behaviourData);
@@ -81,6 +84,10 @@ const BehaviorTab = ({ changeTabs }: { changeTabs: any }) => {
     ],
     []
   );
+  useEffect(() => {
+    console.log(behaviors)
+  }, [behaviors])
+
 
   const getResults = () => {
     let result: any = {};
@@ -100,6 +107,7 @@ const BehaviorTab = ({ changeTabs }: { changeTabs: any }) => {
   useEffect(() => {
     // console.log(labels);
   }, [labels, behaviors]);
+
 
   const handleChange = (value: any, param: any) => {
     // console.log(item);

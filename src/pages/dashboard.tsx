@@ -1,9 +1,15 @@
 import AnalyticsContainer from "@/component/dashboard/AnalyticsContainer";
 import DashboardTab from "@/component/dashboard";
 import AppLayouts from "@/layouts/AppLayouts";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { setCredentials } from "@/state/reducers/auth.reducer";
+import {
+  Box,
+  Button,
+  Flex,
+  Skeleton,
+  Stack,
+  SimpleGrid,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@/state/hooks/user.hook";
 import { useGetDashboardMutation } from "@/state/services/dashboard.service";
@@ -11,10 +17,7 @@ import { setDashbordData } from "@/state/reducers/dashboard.reducer";
 import { isEmpty, map } from "lodash";
 import {
   setBehaviourData,
-  setCandidateFunctionAreas,
-  setCandidateFunctionalSkills,
   setCandidateSectors,
-  setCandidateTechnicalSkills,
   setCompetencyData,
   setFunctionAreas,
   setProfileData,
@@ -22,12 +25,12 @@ import {
 } from "@/state/reducers/profile.reducer";
 import {
   useGetBehaviourDataQuery,
+  useGetBehaviourMutation,
   useGetCandidateJobSectorsQuery,
   useGetCompetencyDataQuery,
   useGetFunctionAreasQuery,
-  useGetFunctionalSkillsMutation,
   useGetProfileDataQuery,
-  useGetTechnicalSkillsMutation,
+  useGetValueBenchmarkMutation,
   useGetValuesBenchmarkDataQuery,
 } from "@/state/services/profile.service";
 import { useDashboard } from "@/state/hooks/dashboard.hook";
@@ -39,13 +42,17 @@ import { useRouter } from "next/router";
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { token, user } = useAuth();
-  const [getDashbardData] = useGetDashboardMutation();
+  const [getDashbardData, { isLoading: dashboardLoading }] =
+    useGetDashboardMutation();
   const { data, isLoading } = useGetProfileDataQuery(user?.name);
-  const { data: behaviour, error} = useGetBehaviourDataQuery(user?.name);
-  const { data: competency, error: compentencyError } = useGetCompetencyDataQuery(user?.name);
+  const { data: behaviour, error } = useGetBehaviourDataQuery(user?.name);
+  const { data: competency, error: compentencyError } =
+    useGetCompetencyDataQuery(user?.name);
   const { data: valuesBenchmarks } = useGetValuesBenchmarkDataQuery(user?.name);
   const { data: jobSector } = useGetCandidateJobSectorsQuery(user?.name);
   const { data: functionalAreas } = useGetFunctionAreasQuery(user?.user);
+  const [getBehaviour] = useGetBehaviourMutation();
+  const [getValuesBehaviour] = useGetValueBenchmarkMutation();
   const { dashboardData } = useDashboard();
   const { behaviourData, competencyData, valuesData } = useProfile();
   const { jobList } = dashboardData;
@@ -59,58 +66,108 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const formData = {
-      username: user?.name,
-    };
-    getDashbardData(formData)
-      .unwrap()
-      .then((payload) => {
-        dispatch(setDashbordData({ data: payload }));
-      });
-  }, [getDashbardData,dispatch,user]);
+    if (!isEmpty(user)) {
+      const formData = {
+        username: user?.name,
+      };
+      getDashbardData(formData)
+        .unwrap()
+        .then((payload) => {
+          console.log(payload, "dashboard");
+          dispatch(setDashbordData({ data: payload }));
+        })
+        .catch((error) => console.log(error, "dashboard"));
+    }
+  }, [getDashbardData, dispatch, user]);
 
   useEffect(() => {
     if (data) {
       dispatch(setProfileData({ data: data }));
     }
-  }, [data,dispatch]);
+  }, [data, dispatch]);
+  // useEffect(() => {
+  //   if (behaviour) {
+  //     console.log("behave", behaviour);
+  //     dispatch(setBehaviourData({ data: behaviour }));
+  //   }
+  //   if (error) {
+  //     console.log(error);
+  //   }
+  // }, [behaviour, error, dispatch]);
   useEffect(() => {
-    if (behaviour) {
-      dispatch(setBehaviourData({ data: behaviour }));
+    if (isEmpty(behaviourData)) {
+      getBehaviour(user?.name)
+        .unwrap()
+        .then((payload) => dispatch(setBehaviourData({ data: payload })));
     }
-    if(error){
-      console.log(error)
+  }, []);
+  useEffect(() => {
+    if (isEmpty(valuesData)) {
+      getValuesBehaviour(user?.name)
+        .unwrap()
+        .then((payload) => {
+          console.log(payload, "values");
+          dispatch(setValuesData({ data: payload }));
+        });
     }
-  }, [behaviour,error,dispatch]);
+  }, []);
+
   useEffect(() => {
     if (competency) {
       dispatch(setCompetencyData({ data: competency }));
     }
-  }, [competency,dispatch]);
-  useEffect(() => {
-    if (valuesBenchmarks) {
-      dispatch(setValuesData({ data: valuesBenchmarks }));
-    }
-  }, [valuesBenchmarks,dispatch]);
+  }, [competency, dispatch]);
+  // useEffect(() => {
+  //   if (valuesBenchmarks) {
+  //     dispatch(setValuesData({ data: valuesBenchmarks }));
+  //   }
+  // }, [valuesBenchmarks, dispatch]);
 
   useEffect(() => {
     if (functionalAreas) {
       dispatch(setFunctionAreas({ data: functionalAreas }));
     }
-  }, [functionalAreas,dispatch]);
+  }, [functionalAreas, dispatch]);
 
   useEffect(() => {
     if (jobSector) {
       dispatch(setCandidateSectors({ data: jobSector }));
     }
-  }, [jobSector,dispatch]);
+  }, [jobSector, dispatch]);
 
   return (
     <AppLayouts>
       <Box h={"200%"} mt={24}>
-        <Box mb={8}>
-          <AnalyticsContainer />
-        </Box>
+        {dashboardLoading ? (
+          <SimpleGrid
+            columns={{
+              base: 1,
+              sm: 2,
+              lg: 4,
+              xl: 4,
+            }}
+            mb={{
+              base: 4,
+            }}
+            spacing={6}
+          >
+            {[...Array(4)].map((_id, index) => (
+              <Skeleton
+                key={index}
+                height="120px"
+                bg="green.500"
+                color="white"
+                borderBottomRadius={20}
+                fadeDuration={1}
+              />
+            ))}
+          </SimpleGrid>
+        ) : (
+          <Box mb={8}>
+            <AnalyticsContainer />
+          </Box>
+        )}
+
         <Box flex={1}>
           <Flex
             mb={2}

@@ -1,11 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import {
-  Box,
-  Drawer,
-  DrawerContent,
-  useDimensions,
+  Box, useDimensions,
   useDisclosure,
-  useTheme,
+  useTheme
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -19,9 +16,8 @@ import { SidebarContent } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
 import { useAuth } from "@/state/hooks/user.hook";
 import {
-  setLoading,
   setPrevRoute,
-  signOut,
+  signOut
 } from "@/state/reducers/auth.reducer";
 import { useDispatch } from "react-redux";
 import jwtDecode from "jwt-decode";

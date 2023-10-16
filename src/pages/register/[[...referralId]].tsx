@@ -6,12 +6,10 @@ import {
   Text,
   Container,
   Button,
-  Link,
-  Checkbox,
-  HStack,
+  Link, HStack,
   Icon,
   Image,
-  useToast,
+  useToast
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -112,7 +110,7 @@ const schema = yup
 export const nameSchema = yup
   .string()
   .matches(
-    /^[a-zA-Z0-9]+[-_ ]{0,1}[a-zA-Z]*$/g,
+    /^[a-zA-Z0-9_-]+$/g,
     "must not contain special chracters"
   );
 
@@ -291,7 +289,7 @@ const Register = () => {
 
         setError("username", {
           type: "custom",
-          message: "only letters(a-zA-Z) and - _ are allowed",
+          message: "only letters(a-zA-Z0-9) and - _ are allowed",
         });
       });
   };

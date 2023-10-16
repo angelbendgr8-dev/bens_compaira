@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import Slider from "./Slider";
+import Slider from "./slider";
 import { useProfile } from "@/state/hooks/profile.hook";
 import { isEmpty,size } from "lodash";
 import { processBehaviour } from "@/utils/helpers";
@@ -77,6 +77,7 @@ const ValuesTab = ({ changeTabs }: { changeTabs: any }) => {
       } else {
         setDisabled(true);
       }
+        console.log(behaviors, "values");
       const keys = Object.keys(valuesData);
       const values = Object.values(valuesData);
       const vals = processBehaviour(keys, values);
@@ -99,7 +100,10 @@ const ValuesTab = ({ changeTabs }: { changeTabs: any }) => {
   //     setDisabled(true);
   //   }
   // }, [valuesData]);
-
+  useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
   const getResults = () => {
     let result: any = {};
     for (let i = 0; i < dataLabels.length; i++) {

@@ -28,16 +28,20 @@ import {
   setCompetencyGraphData,
   setDashbordData,
 } from "@/state/reducers/dashboard.reducer";
-
+import { isEmpty } from "lodash";
+import { useProfile } from "@/state/hooks/profile.hook";
 type Props = {
   children: React.ReactNode;
 };
 const DashboardTab = () => {
   const { user } = useAuth();
   const [getDashboardData] = useGetDashboardMutation();
-  const [getCompetencyGrapph,{isLoading: competencyGraphLoading}] = useGetCompentecyGraphMutation();
-  const [getBehaviourGraph, {isLoading: behaviorGraphLoading}] = useGetBehaviourGraphMutation();
+  const [getCompetencyGrapph, { isLoading: competencyGraphLoading }] =
+    useGetCompentecyGraphMutation();
+  const [getBehaviourGraph, { isLoading: behaviorGraphLoading }] =
+    useGetBehaviourGraphMutation();
   const dispatch = useDispatch();
+  const { behaviourData, competencyData } = useProfile();
   /* eslint-disable react/display-name */
   const CustomTab = React.forwardRef(function (props: Props, ref) {
     // 1. Reuse the `useTab` hook
@@ -78,11 +82,14 @@ const DashboardTab = () => {
     );
   });
   useEffect(() => {
-    getDashboardData(user?.name)
-      .unwrap()
-      .then((payload) => {
-        dispatch(setDashbordData({ data: payload }));
-      });
+    // if (!isEmpty(user)) {
+    //   getDashboardData(user?.name)
+    //     .unwrap()
+    //     .then((payload) => {
+    //       console.log(payload,'job spec')
+    //       dispatch(setDashbordData({ data: payload }));
+    //     }).catch((error)=> console.log(error, 'job spec'));
+    // }
     getCompetencyGrapph(user?.name)
       .unwrap()
       .then((payload) => {
@@ -129,8 +136,9 @@ const DashboardTab = () => {
               md: 2,
             }}
             fontSize={{
-              base: 10,
-              md: 12,
+              base: 8,
+              md: 10,
+              lg: 12
             }}
             fontWeight={"600"}
             textTransform={"uppercase"}
@@ -138,40 +146,46 @@ const DashboardTab = () => {
             Progress
           </Text>
         </CustomTab>
-        <CustomTab>
-          <Icon fontSize="20" as={FaRegUserCircle} />
-          <Text
-            ml={{
-              base: 1,
-              md: 2,
-            }}
-            fontSize={{
-              base: 12,
-              md: 12,
-            }}
-            fontWeight={"600"}
-            textTransform={"uppercase"}
-          >
-            Behavioral Profile
-          </Text>
-        </CustomTab>
-        <CustomTab>
-          <Icon fontSize="20" as={HiOutlineMail} />
-          <Text
-            ml={{
-              base: 1,
-              md: 2,
-            }}
-            fontSize={{
-              base: 12,
-              md: 12,
-            }}
-            fontWeight={"600"}
-            textTransform={"uppercase"}
-          >
-            Competency Profile
-          </Text>
-        </CustomTab>
+        {!isEmpty(behaviourData) && (
+          <CustomTab>
+            <Icon fontSize="20" as={FaRegUserCircle} />
+            <Text
+              ml={{
+                base: 1,
+                md: 2,
+              }}
+              fontSize={{
+                base: 8,
+                md: 10,
+                lg: 12
+              }}
+              fontWeight={"600"}
+              textTransform={"uppercase"}
+            >
+              Behavioral Profile
+            </Text>
+          </CustomTab>
+        )}
+        {!isEmpty(competencyData) && (
+          <CustomTab>
+            <Icon fontSize="20" as={HiOutlineMail} />
+            <Text
+              ml={{
+                base: 1,
+                md: 2,
+              }}
+              fontSize={{
+                base: 8,
+                md: 10,
+                lg: 12,
+              }}
+              fontWeight={"600"}
+              textTransform={"uppercase"}
+            >
+              Competency Profile
+            </Text>
+          </CustomTab>
+        )}
       </TabList>
       <TabPanels
         bg={"white"}

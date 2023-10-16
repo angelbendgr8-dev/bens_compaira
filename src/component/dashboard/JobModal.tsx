@@ -56,7 +56,7 @@ const JobModal: FC<Props> = ({job,open,onClose}) => {
                   <Text fontSize={18} fontWeight={"bold"}>
                     Job Type
                   </Text>
-                  <Text>{job.jobType}</Text>
+                  <Text textTransform={"capitalize"}>{job.jobType}</Text>
                 </Box>
                 <Box>
                   <Text fontWeight={"bold"}>Job Sector</Text>
@@ -70,13 +70,13 @@ const JobModal: FC<Props> = ({job,open,onClose}) => {
               <VStack flex={1} alignItems={"flex-start"}>
                 <Box>
                   <Text fontWeight={"bold"} color="black">
-                    Functional Skills Required
+                    Functional Skills
                   </Text>
                   <Text>{job.functionalSkillsMust}</Text>
                 </Box>
                 <Box>
                   <Text fontWeight={"bold"} color="black">
-                    Technical Skills Required
+                    Technical Skills
                   </Text>
                   <Text>{job.techinicalSkillsMust}</Text>
                 </Box>

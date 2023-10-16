@@ -9,12 +9,16 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import userAuth from "./reducers/auth.reducer";
 import dashboard from "./reducers/dashboard.reducer";
 import messages from "./reducers/message.reducer";
+import tests from "./reducers/test.reducer";
 import profile from "./reducers/profile.reducer";
+import digitalCv from "./reducers/digitalcv.reducer";
 import { UserAuthApi } from "./services/auth.service";
 import { MessageApi } from "./services/messages.service";
 import { MiscApi } from "./services/miscellaneous.service";
 import { DashboardApi } from "./services/dashboard.service";
 import { ProfileApi } from "./services/profile.service";
+import { TestApi } from "./services/test.service";
+import { DigitalCvApi } from "./services/digitalcv.service";
 
 const persistConfig = {
   key: "root",
@@ -28,11 +32,15 @@ const reducers = combineReducers({
   dashboard,
   profile,
   messages,
+  tests,
+  digitalCv,
   [UserAuthApi.reducerPath]: UserAuthApi.reducer,
   [DashboardApi.reducerPath]: DashboardApi.reducer,
   [ProfileApi.reducerPath]: ProfileApi.reducer,
   [MessageApi.reducerPath]: MessageApi.reducer,
   [MiscApi.reducerPath]: MiscApi.reducer,
+  [TestApi.reducerPath]: TestApi.reducer,
+  [DigitalCvApi.reducerPath]: DigitalCvApi.reducer,
 });
 
 const rootReducer = (state: any, action: any) => {
@@ -61,6 +69,8 @@ export const createStore = (preloadedState?: PreloadedState<RootState>) =>
         DashboardApi.middleware,
         ProfileApi.middleware,
         MessageApi.middleware,
+        TestApi.middleware,
+        DigitalCvApi.middleware,
       ]),
   });
 export const store = createStore();

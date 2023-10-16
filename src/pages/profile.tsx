@@ -1,5 +1,5 @@
 import ProfileTabs from "@/component/profile";
-import Reminder from "@/component/profile/Cards/Reminder";
+import Reminder from "@/component/profile/cards/Reminder";
 import AppLayouts from "@/layouts/AppLayouts";
 import { useAuth } from "@/state/hooks/user.hook";
 import {

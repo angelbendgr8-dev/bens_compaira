@@ -32,6 +32,8 @@ import CustomInput from "../forms/Input";
 import SelectInput from "../forms/Select";
 import { useProfile } from "@/state/hooks/profile.hook";
 import { isEmpty } from "lodash";
+
+const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_API_URL;
 import {
   useGetFunctionalSkillsMutation,
   useGetTechnicalSkillsMutation,
@@ -250,6 +252,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
       nameSchema
         .validate(val)
         .then(() => {
+          console.log('cleared')
           clearErrors(label);
         })
         .catch((e) => {
@@ -257,7 +260,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
 
           setError(label, {
             type: "custom",
-            message: "only letters(a-zA-Z) and - _ are allowed",
+            message: "Only letters(a-zA-Z) and - _ are allowed",
           });
         });
     },
@@ -376,10 +379,10 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
   }, [selectedFunctAreas, getFunctionalSkills, getTechnicalSkills, setValue]);
 
   useEffect(() => {
-    if (candidateFunctionAreas) {
+    if (!isEmpty(candidateFunctionAreas)) {
       // console.log(candidateSectors);
       let values: any = [];
-      candidateFunctionAreas.map((sel: any) => {
+      candidateFunctionAreas?.map((sel: any) => {
         functAreas.map((segment: any) => {
           if (segment.id === sel) {
             values.push({
@@ -408,7 +411,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
           }));
           setTechnicalSkills(options);
           let values: any = [];
-          candidateTechnicalSkills.map((sel: any) => {
+          candidateTechnicalSkills?.map((sel: any) => {
             payload.map((segment: any) => {
               if (segment.id === sel) {
                 values.push({
@@ -442,7 +445,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
           }));
           setFunctionalSkills(options);
           let values: any = [];
-          candidateFunctionalSkills.map((sel: any) => {
+          candidateFunctionalSkills?.map((sel: any) => {
             payload.map((segment: any) => {
               if (segment.id === sel) {
                 values.push({
@@ -559,7 +562,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
     //  });
     changeTabs(1);
   };
-  
+
 
   return (
     <VStack>
@@ -604,7 +607,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 render={({ field: { onChange, value } }) => (
                   <CustomInput
                     label={
-                      "First Name: only letters(a-zA-Z) and - _ are allowed"
+                      "First Name"
                     }
                     id={"firstName"}
                     name="firstName"
@@ -627,7 +630,7 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 render={({ field: { onChange, value } }) => (
                   <CustomInput
                     label={
-                      "Last Name: only letters(a-zA-Z) and - _ are allowed"
+                      "Last Name"
                     }
                     id={"lastName"}
                     name="lastName"
@@ -643,28 +646,28 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 name="lastName"
               />
 
-                <Controller
-                  control={control}
-                  rules={{
-                    maxLength: 100,
-                  }}
-                  render={({ field: { onChange, value } }) => (
-                    <PhoneNumberInput
-                      name="phone"
-                      errors={errors}
-                      value={value}
-                      code={profile.phoneCode}
-                      couName={getValues("country")}
-                      onChange={(number) => {
-                        const { code, phone, countryName } = number;
-                        setValue("country", countryName);
-                        setValue("phoneCode", code);
-                        setValue("phone", phone);
-                      }}
-                    />
-                  )}
-                  name="phone"
-                />
+              <Controller
+                control={control}
+                rules={{
+                  maxLength: 100,
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <PhoneNumberInput
+                    name="phone"
+                    errors={errors}
+                    value={value}
+                    code={profile.phoneCode}
+                    couName={getValues("country")}
+                    onChange={(number) => {
+                      const { code, phone, countryName } = number;
+                      setValue("country", countryName);
+                      setValue("phoneCode", code);
+                      setValue("phone", phone);
+                    }}
+                  />
+                )}
+                name="phone"
+              />
 
               <Controller
                 control={control}
@@ -965,7 +968,9 @@ const InformationTab = ({ changeTabs }: { changeTabs: any }) => {
                 base: 6,
                 md: 4,
               }}
-              href="/login"
+              href={`${BASE_URL}/${profile?.cvFile}`}
+              target="_blank"
+              download
             >
               Download CV
             </Link>

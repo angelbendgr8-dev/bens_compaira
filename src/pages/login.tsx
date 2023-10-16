@@ -5,7 +5,7 @@ import {
   setData,
   setLoading,
 } from "@/state/reducers/auth.reducer";
-import { HStack, Image, Progress, useToast } from "@chakra-ui/react";
+import { HStack, Image, useToast } from "@chakra-ui/react";
 import {
   Box,
   Flex,
@@ -13,14 +13,11 @@ import {
   Heading,
   Text,
   Container,
-  Input,
   Button,
-  FormLabel,
   Link,
-  FormControl,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { Controller, useForm } from "react-hook-form";
@@ -30,6 +27,7 @@ import PasswordInput from "@/component/forms/Password";
 import { login } from "@/state/services/awscognito.service";
 import { isEmpty } from "lodash";
 import { useLoginActivityMutation } from "@/state/services/auth.service";
+import { useGetPercentageMutation } from "@/state/services/profile.service";
 
 const schema = yup
   .object({
@@ -46,6 +44,7 @@ export default function Login() {
   const { next }: any = router.query;
   const { prevRoute } = useAuth();
   const [loginActivity] = useLoginActivityMutation();
+  const [getPercentage] = useGetPercentageMutation();
 
   const {
     control,
@@ -91,12 +90,11 @@ export default function Login() {
     dispatch(setLoading({ isLoading: true }));
 
     const response = await login(username, password, dispatch);
-    console.log(response, "response");
+    // console.log(response, "response");
   };
 
   useEffect(() => {
     if (token) {
-      console.log(token);
       const formData = {
         username: user?.name,
         userType: 1,
@@ -106,12 +104,23 @@ export default function Login() {
         .unwrap()
         .then(() => {})
         .catch(() => {});
-      if (!isEmpty(prevRoute)) {
-        router.push(prevRoute);
-      } else {
-        //  router.push("/dashboard");
-        next ? router.push(next) : router.push("/dashboard");
-      }
+      getPercentage(user?.name)
+        .unwrap()
+        .then((payload) => {
+          console.log(payload);
+          if(payload.completionPercentage < 50){
+            router.push('/profile');
+          }else{
+             if (!isEmpty(prevRoute)) {
+               router.push(prevRoute);
+             } else {
+               //  router.push("/dashboard");
+               next ? router.push(next) : router.push("/dashboard");
+             }
+          }
+        })
+        .catch((err) => {});
+
     }
   }, [token, router, next, prevRoute, loginActivity, user]);
   return (
@@ -143,10 +152,7 @@ export default function Login() {
             justifyContent={"center"}
           >
             <Stack alignItems={"center"} mb={4}>
-              <Image
-                alt="logo"
-                src={"assets/images/app_logo.png"}
-              />
+              <Image alt="logo" src={"assets/images/app_logo.png"} />
               <Heading
                 color={"gray.800"}
                 lineHeight={1.1}

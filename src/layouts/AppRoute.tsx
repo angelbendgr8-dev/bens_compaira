@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { useState } from "react";
+import { Box } from "@chakra-ui/react";
 import ProtectedRoute from "./ProtectedRoute";
 import { HomeLayoutProps } from "@/interfaces/app.interface";
-import jwtDecode from "jwt-decode";
 import { useDispatch } from "react-redux";
-import { signOut } from "@/state/reducers/auth.reducer";
-import { logout } from "@/state/services/awscognito.service";
-import Router from "next/router";
 import { useAuth } from "@/state/hooks/user.hook";
 
 const HomeLayout = ({ children, upload, toggleView }: HomeLayoutProps) => {

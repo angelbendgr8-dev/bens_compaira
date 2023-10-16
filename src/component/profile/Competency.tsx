@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import React, { useEffect, useState,useMemo } from "react";
-import Slider from "./Slider";
+import Slider from "./slider";
 import { useProfile } from "@/state/hooks/profile.hook";
 import { processBehaviour } from "@/utils/helpers";
 import { size } from "lodash";
@@ -65,7 +65,7 @@ const Competency = ({ changeTabs }: { changeTabs: any }) => {
 
   useEffect(() => {
     if (size(competencyData) > 0) {
-
+        console.log(behaviors, "competency");
       const keys = Object.keys(competencyData);
       const values = Object.values(competencyData);
       const vals = processBehaviour(keys, values);
@@ -113,6 +113,7 @@ const Competency = ({ changeTabs }: { changeTabs: any }) => {
 
     changeTabs(3);
   };
+
   const handleChange = (value: any, param: any) => {
     // console.log(item);
 

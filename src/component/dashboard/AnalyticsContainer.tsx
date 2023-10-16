@@ -1,6 +1,6 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React from "react";
-import { Analytics } from "./Cards/Analytics";
+import { Analytics } from "./cards/Analytics";
 import { FaUserTie, FaTrophy, FaRegThumbsDown } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useDashboard } from "@/state/hooks/dashboard.hook";

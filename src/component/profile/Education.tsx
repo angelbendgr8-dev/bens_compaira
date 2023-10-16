@@ -1,6 +1,6 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import React, { FC, useState } from "react";
-import { OptionCards } from "./Cards/OptionCards";
+import { OptionCards } from "./cards/OptionCards";
 
 import {
   FaBookReader,

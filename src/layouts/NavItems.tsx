@@ -3,7 +3,7 @@ import { Flex, FlexProps, Icon } from "@chakra-ui/react";
 import { ReactText } from "react";
 import { IconType } from "react-icons";
 import { RiLogoutCircleRFill } from "react-icons/ri";
-import { FaBox, FaRegComments, FaRegUserCircle } from "react-icons/fa";
+import { FaBox, FaRegComments, FaRegUserCircle, FaDigitalTachograph } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { logout } from "@/state/services/awscognito.service";
 import { signOut } from "@/state/reducers/auth.reducer";
@@ -25,7 +25,8 @@ export const LinkItems: Array<LinkItemProps> = [
   { name: "Dashboard", icon: FaBox, route: "/dashboard" },
   { name: "Messages", icon: FaRegComments, route: "/messages" },
   { name: "Profile", icon: FaRegUserCircle, route: "/profile" },
-  { name: "Logout", icon: RiLogoutCircleRFill, route: "/logout" },
+  { name: "DigitalCV", icon: FaDigitalTachograph, route: "/digitalCV" },
+  { name: "Logout", icon: RiLogoutCircleRFill, route: "/logout" }
 ];
 export const NavItem = ({ route, icon, children, ...rest }: NavItemProps) => {
   const router = useRouter();

@@ -6,87 +6,86 @@ const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_API_URL;
 // console.log(BASE_URL);
 // Define a service using a base URL and expected endpoints
 export const ProfileApi = createApi({
-  reducerPath: 'ProfileApi',
+  reducerPath: "ProfileApi",
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    prepareHeaders: (headers, {getState}) => {
+    prepareHeaders: (headers, { getState }) => {
       // By default, if we have a token in the store, let's use that for authenticated requests
       const token = (getState() as RootState).userAuth.token;
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;
     },
   }),
-  tagTypes: ['percentage','profile'],
-  endpoints: builder => ({
+  tagTypes: ["percentage", "profile", "behaviourData"],
+  endpoints: (builder) => ({
     saveProfileData: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/candidate/profile/${username}`,
-        method: 'PUT',
-        body: credentials
+        method: "PUT",
+        body: credentials,
       }),
-       invalidatesTags: ['profile']
-
+      invalidatesTags: ["profile"],
     }),
     saveProfilePics: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/upload/candidate/photo/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
-      invalidatesTags: ['profile']
+      invalidatesTags: ["profile"],
     }),
     uploadCV: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/upload/candidate/document/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
     }),
     saveTechnicalSkill: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/technicalSkills/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
     }),
     saveFunctionalSkill: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/functionalSkills/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
     }),
     saveFunctionAreas: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/functionAreas/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
     }),
     saveJobsector: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/jobsectors/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
     }),
     saveBehaviourData: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/behaviourprofile/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
-      invalidatesTags: ['percentage']
+      invalidatesTags: ["percentage", "behaviourData"],
     }),
     saveCompetencyData: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/competencyprofile/candidate/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
-      invalidatesTags: ['percentage']
+      invalidatesTags: ["percentage"],
     }),
     getCompetencyData: builder.query({
       query: (username) => ({
@@ -94,14 +93,19 @@ export const ProfileApi = createApi({
       }),
     }),
     saveValuesBenchmarkData: builder.mutation({
-      query: ({username,credentials}) => ({
+      query: ({ username, credentials }) => ({
         url: `/candidate/valuesurvey/${username}`,
-        method: 'POST',
-        body: credentials
+        method: "POST",
+        body: credentials,
       }),
-      invalidatesTags: ['percentage']
+      invalidatesTags: ["percentage"],
     }),
     getValuesBenchmarkData: builder.query({
+      query: (username) => ({
+        url: `/candidate/valuesurvey/${username}`,
+      }),
+    }),
+    getValueBenchmark: builder.mutation({
       query: (username) => ({
         url: `/candidate/valuesurvey/${username}`,
       }),
@@ -110,9 +114,15 @@ export const ProfileApi = createApi({
       query: (username) => ({
         url: `/candidate/profile/${username}`,
       }),
-      providesTags: ['profile']
+      providesTags: ["profile"],
     }),
     getBehaviourData: builder.query({
+      query: (username) => ({
+        url: `/behaviourprofile/candidate/${username}`,
+      }),
+      providesTags: ["percentage", "behaviourData"],
+    }),
+    getBehaviour: builder.mutation({
       query: (username) => ({
         url: `/behaviourprofile/candidate/${username}`,
       }),
@@ -121,51 +131,53 @@ export const ProfileApi = createApi({
       query: (username) => ({
         url: `/candidate/profile/percentage/${username}`,
       }),
-      providesTags: ['percentage']
+      providesTags: ["percentage"],
+    }),
+    getPercentage: builder.mutation({
+      query: (username) => ({
+        url: `/candidate/profile/percentage/${username}`,
+      }),
     }),
     getFunctionAreas: builder.query({
       query: () => ({
-        url: `/functionAreas/`
+        url: `/functionAreas/`,
       }),
     }),
     getCandidateFunctionAreas: builder.mutation({
       query: (username) => ({
-        url: `/functionAreas/candidate/${username}`
+        url: `/functionAreas/candidate/${username}`,
       }),
     }),
     getCandidateJobSectors: builder.query({
       query: (username) => ({
-        url: `/jobsectors/candidate/${username}`
+        url: `/jobsectors/candidate/${username}`,
       }),
     }),
 
     getFunctionalSkills: builder.mutation({
       query: (functionArea) => ({
         url: `/functionalSkills?functionArea=${functionArea}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
     getCandidateFunctionalSkills: builder.mutation({
       query: (username) => ({
         url: `/functionalSkills/candidate/${username}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
     getTechnicalSkills: builder.mutation({
       query: (functionArea) => ({
         url: `/technicalSkills?functionArea=${functionArea}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
     getCandidateTechnicalSkills: builder.mutation({
       query: (username) => ({
         url: `/technicalSkills/candidate/${username}`,
-        method: 'GET',
+        method: "GET",
       }),
     }),
-
-
-
   }),
 });
 
@@ -193,5 +205,8 @@ export const {
   useGetValuesBenchmarkDataQuery,
   useSaveValuesBenchmarkDataMutation,
   useSaveTechnicalSkillMutation,
-  useGetCandidatePercentageQuery
+  useGetCandidatePercentageQuery,
+  useGetPercentageMutation,
+  useGetBehaviourMutation,
+  useGetValueBenchmarkMutation
 } = ProfileApi;

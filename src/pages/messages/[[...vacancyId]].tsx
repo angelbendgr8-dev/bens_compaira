@@ -10,14 +10,11 @@ import {
 } from "@/state/services/messages.service";
 import {
   Box,
-  Flex,
-  HStack,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
+  Flex, SkeletonCircle,
+  SkeletonText
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function Messages() {

@@ -7,7 +7,7 @@ type messageState = {
 };
 
 const slice = createSlice({
-  name: "dashboard",
+  name: "messages",
   initialState: {
     allVacancies: [],
     individualMessage: []

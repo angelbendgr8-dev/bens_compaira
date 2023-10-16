@@ -1,11 +1,4 @@
-import {
-  HStack,
-  Icon,
-  Image,
-  InputGroup,
-  InputRightElement,
-  useToast,
-} from "@chakra-ui/react";
+import { HStack, Icon, Image, useToast } from "@chakra-ui/react";
 import {
   Box,
   Flex,
@@ -13,14 +6,11 @@ import {
   Heading,
   Text,
   Container,
-  Input,
   Button,
-  FormLabel,
   Link,
-  FormControl,
 } from "@chakra-ui/react";
 
-import { FC, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsCheck } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import { Controller, useForm } from "react-hook-form";
@@ -28,17 +18,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "yup-phone";
 import _ from "lodash";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import CustomInput from "@/component/forms/Input";
 import PasswordInput from "@/component/forms/Password";
 import { useRouter } from "next/router";
 import { useAuth } from "@/state/hooks/user.hook";
 import { isEmpty } from "lodash";
 import { useDispatch } from "react-redux";
-import {
-  setData,
-  setLoading,
-} from "@/state/reducers/auth.reducer";
+import { setData, setLoading } from "@/state/reducers/auth.reducer";
 import { resetPassword } from "@/state/services/awscognito.service";
 
 const schema = yup
@@ -60,7 +46,7 @@ const schema = yup
 
 const ResetPassword = () => {
   const router = useRouter();
-  const { loading, error, token, data,resetEmail } = useAuth();
+  const { loading, error, token, data, resetEmail } = useAuth();
   const toast = useToast();
   const dispatch = useDispatch();
   console.log(resetEmail);
@@ -107,7 +93,7 @@ const ResetPassword = () => {
       dispatch(setLoading({ isLoading: false }));
       dispatch(setData({ data: {} }));
       toast({
-        title: 'Password reset successfully',
+        title: "Password reset successfully",
         variant: "left-accent",
         status: "success",
         isClosable: true,
@@ -115,7 +101,7 @@ const ResetPassword = () => {
       });
       router.replace("/login");
     }
-  }, [data,router,dispatch,toast]);
+  }, [data, router, dispatch, toast]);
   useEffect(() => {
     console.log(error);
     if (error && error?.state === true) {
@@ -129,7 +115,7 @@ const ResetPassword = () => {
 
       dispatch(setLoading({ isLoading: false }));
     }
-  }, [error,dispatch,toast]);
+  }, [error, dispatch, toast]);
 
   const onSubmit = async (data: any) => {
     const { code, password } = data;

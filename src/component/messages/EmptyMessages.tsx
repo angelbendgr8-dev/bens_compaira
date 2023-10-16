@@ -18,7 +18,7 @@ const EmptyMessages =() => {
         src={"/assets/images/message.png"}
       />
       <Text fontSize={{ base: 16 }} lineHeight={2} letterSpacing={2} fontWeight="400">
-        Start your chat
+       You have no chat. your chats will appear here.
       </Text>
     </VStack>
   );

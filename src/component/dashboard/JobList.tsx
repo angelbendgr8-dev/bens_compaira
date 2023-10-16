@@ -14,41 +14,50 @@ import {
   Text,
   VStack,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
-import { map, isEmpty } from "lodash";
+import { map, isEmpty, filter } from "lodash";
 import { FaUsers, FaChartPie, FaPuzzlePiece, FaHeart } from "react-icons/fa";
 import { BsBriefcaseFill, BsClockFill } from "react-icons/bs";
 import { RiStickyNoteFill } from "react-icons/ri";
+import { useRouter } from "next/router";
+import {
+  useGetQuestionsMutation,
+  useGetTestMutation,
+} from "@/state/services/test.service";
+import { useDispatch } from "react-redux";
+import { size } from "lodash";
+import { setJob, setTest } from "@/state/reducers/test.reducer";
 type Props = {
   job: any;
   closeModal: any;
   handleView: any;
 };
 const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
-    const {
-      vacancyId,
-      title,
-      cvScore,
-      fSkillsScore,
-      tSkillsScore,
-      behaviourScore,
-      competencyScore,
-      qualification,
-      functionalSkills,
-      responsibilities,
-      description,
-      status,
-      jobSector,
-      jobType,
-      tests,
-      desc,
-      // status,
-      // desired,
-      technicalSkills,
-      companyLogo,
-      handleApply,
-    } = job;
+  const {
+    vacancyId,
+    title,
+    cvScore,
+    fSkillsScore,
+    tSkillsScore,
+    behaviourScore,
+    competencyScore,
+    qualification,
+    functionalSkills,
+    responsibilities,
+    description,
+    status,
+    jobSector,
+    jobType,
+    tests,
+    desc,
+    // status,
+    // desired,
+    technicalSkills,
+    companyLogo,
+    handleApply,
+  } = job;
   const [applyVacancy] = useApplyVacancyMutation();
   const [rejectVacancy] = useRejectVacancyMutation();
   const [deleteVacancy] = useDeleteVacancyMutation();
@@ -58,6 +67,11 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
   const [isCandidateFit, setIsFit] = useState(false);
   const [testDone, setTestDone] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [getTest, { isLoading: loadingTest }] = useGetQuestionsMutation();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [ctest, setCTest] = useState({});
+  const [jobStatus, setJobStatus] = useState(status);
 
   useEffect(() => {
     const isFit =
@@ -67,20 +81,15 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
       behaviourScore > 0 &&
       competencyScore > 0;
     setIsFit(isFit);
-  }, [behaviourScore, competencyScore,cvScore,fSkillsScore,tSkillsScore]);
+  }, [behaviourScore, competencyScore, cvScore, fSkillsScore, tSkillsScore]);
   useEffect(() => {
-    let testIsDone: any = [];
-    map(tests, (test) => {
-      if (test.done === "false") {
-        testIsDone = [...testIsDone, "false"];
-      } else {
-        // testIsDone = [...testIsDone, 'a'];
-        // console.log('errr');
-      }
-    });
+    const testIsDone = filter(tests, (test) => test.done !== "true");
     setTestDone(testIsDone);
   }, [tests]);
 
+  useEffect(() => {
+    console.log(job);
+  }, []);
 
   const handleRemove = () => {
     const formData = {
@@ -88,19 +97,27 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
       vacancyId: vacancyId,
       candidateUsername: user?.name,
     };
+    console.log(formData);
     if (status === "hide") {
-      deleteVacancy({ username: user?.name, credential: formData });
-    } else rejectVacancy({ username: user?.name, credential: formData });
+      deleteVacancy({ username: user?.name, credentials: formData })
+        .unwrap()
+        .then((payload) => setJobStatus("hide"));
+    } else
+      rejectVacancy({ username: user?.name, credentials: formData })
+        .unwrap()
+        .then((payload) => setJobStatus("rejected"));
   };
 
   const onApply = () => {
     const formData = {
-      choice: "hide",
+      choice: "applied",
       vacancyId: vacancyId,
       candidateUsername: user?.name,
     };
     if (isCandidateFit) {
-      applyVacancy({ username: user?.name, credential: formData });
+      applyVacancy({ username: user?.name, credentials: formData })
+        .unwrap()
+        .then((payload) => setJobStatus("applied"));
       setApply(true);
     }
     if (!(tSkillsScore > 0) && !(fSkillsScore > 0)) {
@@ -112,7 +129,7 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
         position: "top-left",
       });
     }
-    if (cvScore > 0) {
+    if (!(cvScore > 0)) {
       toast({
         title: "CV score doesnt match",
         variant: "left-accent",
@@ -149,8 +166,48 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
       });
     }
   };
+  useEffect(() => {}, [jobStatus]);
+
+  // useEffect(() => {
+  //   if (
+  //     testDone?.length > 0 &&
+  //     !(jobStatus === "applied") &&
+  //     !(jobStatus === "rejected") &&
+  //     !(jobStatus === "hide")
+  //   ) {
+  //     getTest(vacancyId)
+  //       .unwrap()
+  //       .then((payload: any) => {
+  //         setCTest(payload);
+  //       })
+  //       .catch(() => {});
+  //   }
+  // }, [testDone]);
+
+  const gotoTest = (testId: string) => {
+    getTest({ username: user?.name, testId })
+      .unwrap()
+      .then((payload: any) => {
+        dispatch(setTest({ test: payload }));
+        dispatch(setJob({ job }));
+        router.push("/tests");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
-    <HStack>
+    <HStack
+      justifyContent={
+        size(testDone) > 0 && jobStatus === "applied"
+          ? "space-between"
+          : "flex-start"
+      }
+      shadow={"xl"}
+      rounded="xl"
+      boxShadow={"md"}
+    >
       <Avatar
         size={"xl"}
         m={4}
@@ -160,7 +217,7 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
             : "http://cdn.onlinewebfonts.com/svg/img_148020.png"
         }
       />
-      <Box>
+      <Box flex={1}>
         <Text
           fontSize={24}
           w={{
@@ -179,7 +236,7 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
         </HStack>
         <HStack>
           <Icon fontSize="14" color="muted.200" as={BsClockFill} />
-          <Text>{jobType}</Text>
+          <Text textTransform={"capitalize"}>{jobType}</Text>
         </HStack>
         <VStack alignItems={"flex-start"}>
           {apply && (
@@ -230,9 +287,10 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
             >
               View details
             </Button>
-            {!(status === "shortlist") &&
-              !(status === "applied") &&
-              !(status === "hide") && (
+            {!(jobStatus === "shortlist") &&
+              !(jobStatus === "applied") &&
+              !(jobStatus === "reject") &&
+              !(jobStatus === "hide") && (
                 <Button
                   bg={"green.300"}
                   _hover={{
@@ -248,18 +306,20 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
 
             <Button
               bg={`${
-                status === "hide"
+                jobStatus === "hide"
                   ? "#078f78"
-                  : status === "rejected"
+                  : jobStatus === "rejected"
                   ? ""
                   : "#ee6f57"
               }`}
-              isDisabled={isLoading || status === "rejected"}
+              isDisabled={
+                isLoading || jobStatus === "rejected" || jobStatus === "applied"
+              }
               _hover={{
                 bg: `${
-                  status === "hide"
+                  jobStatus === "hide"
                     ? "#078f78"
-                    : status === "rejected"
+                    : jobStatus === "rejected"
                     ? ""
                     : "#ee6f57"
                 }`,
@@ -268,26 +328,50 @@ const JobList: FC<Props> = ({ job, closeModal, handleView }) => {
               fontSize={14}
               color="white"
             >
-              {status === "hide" ? "Rejected" : "Reject"}
+              {jobStatus === "hide"
+                ? "Rejected"
+                : jobStatus === "applied"
+                ? "Applied"
+                : "Reject"}
             </Button>
-            {status === 'shortlist' && (
-            <Button
-              bg={"#302F3D"}
-              textTransform="capitalize"
-              isDisabled={isLoading || status === "rejected"}
-              _hover={{
-                bg: "#302F3D",
-              }}
-              onClick={handleRemove}
-              fontSize={14}
-              color="white"
-            >
-              Shortlisted
-            </Button>
+            {jobStatus === "shortlist" && (
+              <Button
+                bg={"#302F3D"}
+                textTransform="capitalize"
+                isDisabled={isLoading || jobStatus === "rejected"}
+                _hover={{
+                  bg: "#302F3D",
+                }}
+                onClick={handleRemove}
+                fontSize={14}
+                color="white"
+              >
+                Shortlisted
+              </Button>
             )}
           </Flex>
         </VStack>
       </Box>
+      {testDone?.length > 0 && jobStatus === "applied" && (
+        <VStack
+          alignSelf={"flex-start"}
+          justifyContent={"center"}
+          alignItems="center"
+        >
+          {map(testDone, (test, index) => (
+            <Tooltip key={index} label={test.testName} aria-label="A tooltip">
+              <Button
+                isDisabled={loadingTest}
+                onClick={() => gotoTest(test.testId)}
+                width={"100%"}
+                colorScheme="green"
+              >
+                Take Test {index + 1}
+              </Button>
+            </Tooltip>
+          ))}
+        </VStack>
+      )}
     </HStack>
   );
 };
