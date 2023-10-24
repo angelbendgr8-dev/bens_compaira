@@ -13,40 +13,31 @@ import { Box, Button, Flex, Image } from "@chakra-ui/react";
 import React, { useEffect, FC } from "react";
 import { useDispatch } from "react-redux";
 import { useEffectOnce } from "usehooks-ts";
+import { isEmpty } from "lodash";
 
 type Props = {
   isLoading?: boolean;
 };
-const CompetencyTabContent: FC<Props> = ({
-  isLoading,
-}) => {
+const CompetencyTabContent: FC<Props> = ({ isLoading }) => {
   const [getCompetencyGrapph] = useGetCompentecyGraphMutation();
   const { competencyGraph } = useDashboard();
   const { profileData } = useProfile();
   const dispatch = useDispatch();
 
   useEffectOnce(() => {
-    getCompetencyGrapph(profileData?.id)
-      .unwrap()
-      .then((payload) => {
-        dispatch(setCompetencyGraphData({ data: payload }));
-      });
+    if (!isEmpty(profileData?.id)) {
+      getCompetencyGrapph(profileData?.id)
+        .unwrap()
+        .then((payload) => {
+          dispatch(setCompetencyGraphData({ data: payload }));
+        })
+        .catch((error) => console.log(error));
+    }
   });
   useEffect(() => {}, [competencyGraph]);
 
   return (
     <Box>
-      <Button
-        borderWidth={1}
-        borderColor="primary.100"
-        color="primary.100"
-        bg="transparent"
-        px={{
-          base: 24,
-        }}
-      >
-        Generate Report
-      </Button>
       <Flex
         display={{ base: "none", md: "block" }}
         bg="blue.500"

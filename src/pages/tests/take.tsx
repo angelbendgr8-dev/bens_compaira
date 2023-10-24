@@ -138,7 +138,7 @@ const TakeTest = () => {
 
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
-      countStart: test.duration * 60,
+      countStart: (test?.duration ?? 0) * 60,
       intervalMs: intervalValue,
     });
   const goBack = () => {

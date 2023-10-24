@@ -94,12 +94,14 @@ const DashboardTab = () => {
       .unwrap()
       .then((payload) => {
         dispatch(setCompetencyGraphData({ data: payload }));
-      });
+      })
+      .catch((error) => {});;
     getBehaviourGraph(user?.name)
       .unwrap()
       .then((payload) => {
         dispatch(setBehaviourGraphData({ data: payload }));
-      });
+      })
+      .catch((error) => {});
   }, [
     getBehaviourGraph,
     getCompetencyGrapph,

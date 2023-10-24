@@ -6,16 +6,21 @@ import {
   Text,
   Container,
   Button,
-  Link, HStack,
+  Link,
+  HStack,
   Icon,
   Image,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 import { PhoneNumberInput } from "@/component/forms/PhoneInput";
 import _, { debounce } from "lodash";
-const SUPPORTED_FORMATS = ["application/pdf", "application/msword"];
+const SUPPORTED_FORMATS = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
 
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -109,10 +114,7 @@ const schema = yup
 
 export const nameSchema = yup
   .string()
-  .matches(
-    /^[a-zA-Z0-9_-]+$/g,
-    "must not contain special chracters"
-  );
+  .matches(/^[a-zA-Z0-9_-]+$/g, "must not contain special chracters");
 
 const Register = () => {
   const router = useRouter();
@@ -132,7 +134,7 @@ const Register = () => {
   const [checkEmail, { isLoading }] = useCheckEmailMutation();
   const [checkUsername, { isLoading: userLoading }] =
     useCheckUsernameMutation();
-  const [complete, setComplete] = useState(false)
+  const [complete, setComplete] = useState(false);
 
   // States
   const [sectors, setSectors] = useState<any>([]);
@@ -384,7 +386,11 @@ const Register = () => {
       register(rest.username, rest.email, password).then((res) => {});
       await createCandidate(rest);
       await uploadCandidate({ username: rest.username, formData }).unwrap();
-      if (!isEmpty(referralId) && !isEmpty(referralId![0]) && !isEmpty(referralId![1])) {
+      if (
+        !isEmpty(referralId) &&
+        !isEmpty(referralId![0]) &&
+        !isEmpty(referralId![1])
+      ) {
         await setCandidateJobSector({
           username: rest.username,
           credentials: [refSector.id],
@@ -431,13 +437,12 @@ const Register = () => {
   };
   const gotoLogin = () => {
     setComplete(false);
-    router.push('/login');
-  }
+    router.push("/login");
+  };
 
   return (
     <Box>
       <Container maxW={"inherit"} minH={"100vh"} px={0} mx={0}>
-
         <ConfirmModal isOpen={complete} close={gotoLogin} />
         <Stack
           flex={1}

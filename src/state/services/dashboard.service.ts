@@ -3,6 +3,7 @@ import type {RootState} from '../store';
 // import { ReqResult } from '../../../interfaces/user.interface';
 
 const BASE_URL = process.env.NEXT_PUBLIC_REACT_APP_API_URL;
+const PDF_URL = process.env.NEXT_PUBLIC_REACT_APP_PDF_REPORTING_SERVICE_URL;
 console.log(BASE_URL);
 // Define a service using a base URL and expected endpoints
 export const DashboardApi = createApi({
@@ -64,6 +65,12 @@ export const DashboardApi = createApi({
         body: credentials
       }),
     }),
+    generatePdfReport: builder.mutation({
+      query: (candidateId) => ({
+        url: `${PDF_URL}/candidate/${candidateId}`,
+        method: 'GET',
+      }),
+    }),
 
 
   }),
@@ -79,4 +86,5 @@ export const {
   useApplyVacancyMutation,
   useRejectVacancyMutation,
   useDeleteVacancyMutation,
+  useGeneratePdfReportMutation,
 } = DashboardApi;

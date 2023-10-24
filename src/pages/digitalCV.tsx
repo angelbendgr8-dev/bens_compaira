@@ -275,15 +275,19 @@ const DigitalCv: React.FC<DropdownsProps> = () => {
         const exp = processData(cvInfoData.experience);
         setValue("experience", exp);
       } else {
-        const sexperience = cvInfoData?.experience?.join("; ");
-        console.log(sexperience);
+        const sexperience = !isEmpty(cvInfoData?.experience)
+          ? cvInfoData?.experience?.join("; ")
+          : "";
+
         setValue("experience", sexperience);
       }
       if (!isEmpty(education)) {
         const edu = processData(cvInfoData.education);
         setValue("education", edu);
       } else {
-        const seducation = cvInfoData?.education?.join("; ");
+        const seducation = !isEmpty(cvInfoData?.education)
+          ? cvInfoData?.education?.join("; ")
+          : "";
         setValue("education", seducation);
       }
 
@@ -321,8 +325,6 @@ const DigitalCv: React.FC<DropdownsProps> = () => {
   }, [languagesData]);
 
   useEffect(() => {
-    console.log(candidateTechnicalSkills, "techy");
-    console.log(candidateFunctionAreas, "techy");
     getTechnicalSkills(candidateFunctionAreas)
       .unwrap()
       .then((payload: any) => {
@@ -343,6 +345,7 @@ const DigitalCv: React.FC<DropdownsProps> = () => {
             }
           });
         });
+
         if (isEmpty(values)) {
           toast({
             title: "please setup your profile before creating digital cv",
@@ -354,7 +357,8 @@ const DigitalCv: React.FC<DropdownsProps> = () => {
         } else {
         }
         setTechnicalSkills(values);
-      });
+      })
+      .catch((error) => {});
   }, [candidateTechnicalSkills, candidateFunctionAreas]);
   useEffect(() => {}, [candidateFunctionAreas, candidateTechnicalSkills]);
 
@@ -362,23 +366,23 @@ const DigitalCv: React.FC<DropdownsProps> = () => {
     getEducation(user?.name)
       .unwrap()
       .then((payload: any) => {
-        console.log(payload, "edu");
         if (!isEmpty(payload)) {
           const exp = processData(payload);
           setEducation(exp);
         }
-      });
+      })
+      .catch((error) => {});
   }, []);
   useEffect(() => {
     getExperience(user?.name)
       .unwrap()
       .then((payload: any) => {
-        console.log(payload, "exp");
         if (!isEmpty(payload)) {
           const edu = processData(payload);
           setExperience(edu);
         }
-      });
+      })
+      .catch((error) => {});
   }, []);
 
   const processData = (rawData: any) => {

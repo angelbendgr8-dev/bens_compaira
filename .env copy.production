@@ -1,0 +1,10 @@
+
+
+NEXT_PUBLIC_DISABLE_ESLINT_PLUGIN=true
+# NEXT_PUBLIC_REACT_APP_API_URL=http://localhost:8080
+NEXT_PUBLIC_REACT_APP_API_URL=http://dev-ec2.compaira.com:8181
+NEXT_PUBLIC_REACT_APP_GRAPH_URL=http://dev-ec2.compaira.com:9090/api/reports/graph
+NEXT_PUBLIC_REACT_APP_UserPoolId=us-west-1_XoZaVqGiH
+NEXT_PUBLIC_REACT_APP_ClientId=23c5f8gds293facfn8ia65erku
+NEXT_PUBLIC_REACT_APP_USE_MOCK_SERVICE="false"
+NEXT_PUBLIC_REACT_APP_PDF_REPORTING_SERVICE_URL="http://dev-ec2.compaira.com:9090/api/reports/pdf"
